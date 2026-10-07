@@ -1,0 +1,62 @@
+﻿using FluentValidation;
+using NSE.Core.DomainObjects;
+using NSE.Core.Messages;
+using System;
+
+namespace NSE.Clientes.API.Application.Commands
+{
+    public class RegistrarClienteCommand : Command
+    {
+        public Guid Id { get; set; }
+        public string Nome { get; set; }
+        public string Email { get; set; }
+        public string Cpf { get; set; }
+
+        public RegistrarClienteCommand(Guid id, string nome, string email, string cpf)
+        {
+            AggregateId = id;
+            Id = id;
+            Nome = nome;
+            Email = email;
+            Cpf = cpf;
+        }
+
+        public override bool EhValido()
+        {
+            ValidationResult = new RegistrarClienteValidator().Validate(this);
+            return ValidationResult.IsValid;
+        }
+    }
+
+    public class RegistrarClienteValidator : AbstractValidator<RegistrarClienteCommand>
+    {
+        public RegistrarClienteValidator()
+        {
+            RuleFor(c => c.Id)
+                .NotEqual(Guid.Empty)
+                .WithMessage("Id cliente inválido");
+
+            RuleFor(c => c.Nome)
+                .NotEmpty()
+                .WithMessage("O nome do cliente não foi informado");
+
+            RuleFor(c => c.Cpf)
+                .Must(TerCpfValido)
+                .WithMessage("O CPF informado não é válido");
+
+            RuleFor(c => c.Email)
+                .Must(TerEmailValido)
+                .WithMessage("O e-mail informado não é válido");
+        }
+
+        protected static bool TerCpfValido(string cpf)
+        {
+            return Cpf.Validar(cpf);
+        }
+
+        protected static bool TerEmailValido(string email)
+        {
+            return Email.Validar(email);
+        }
+    }
+}

@@ -1,0 +1,31 @@
+﻿using FluentValidation.Results;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using NSE.Clientes.API.Application.Commands;
+using NSE.Clientes.API.Application.Events;
+using NSE.Clientes.API.Data;
+using NSE.Clientes.API.Data.Repositories;
+using NSE.Clientes.API.Models;
+using NSE.Clientes.API.Services;
+using NSE.Core.Mediator;
+
+namespace NSE.Clientes.API.Configurations
+{
+    public static class DependencyInjectionConfig
+    {
+        public static void RegisterServices(this IServiceCollection services)
+        {
+            services.AddScoped<IMediatorHandler, MediatorHandler>();
+
+            services.AddScoped<IRequestHandler<RegistrarClienteCommand, ValidationResult>, RegistrarClienteCommandHandler>();
+
+            services.AddScoped<INotificationHandler<ClienteRegistradoEvent>, ClienteRegistradoEventHandler>();
+
+            services.AddScoped<IClienteRepository, ClienteRepository>();
+
+            services.AddScoped<ClientesContext>();
+
+            services.AddHostedService<RegistroClienteIntegrationHandler>();
+        }
+    }
+}

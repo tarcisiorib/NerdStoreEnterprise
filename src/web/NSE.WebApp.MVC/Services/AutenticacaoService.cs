@@ -1,0 +1,55 @@
+﻿using Microsoft.Extensions.Options;
+using NSE.WebApp.MVC.Extensions;
+using NSE.WebApp.MVC.Models;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace NSE.WebApp.MVC.Services
+{
+    public class AutenticacaoService : Service, IAutenticacaoService
+    {
+        private readonly HttpClient _httpClient;
+
+        public AutenticacaoService(HttpClient httpClient,
+            IOptions<AppSettings> appSettings)
+        {
+            httpClient.BaseAddress = new Uri(appSettings.Value.AutenticacaoUrl);
+            _httpClient = httpClient;
+        }
+
+        public async Task<UsuarioRespostaLogin> Login(UsuarioLogin usuarioLogin)
+        {
+            var loginContent = ObterConteudo(usuarioLogin);
+
+            var response = await _httpClient.PostAsync("/api/identidade/entrar", loginContent);
+
+            if (!TratarErrosResponse(response))
+            {
+                return new UsuarioRespostaLogin
+                {
+                    ResponseResult = await DeserializarObjetoResponse<ResponseResult>(response)
+                };
+            }
+
+            return await DeserializarObjetoResponse<UsuarioRespostaLogin>(response);
+        }
+
+        public async Task<UsuarioRespostaLogin> Register(UsuarioRegistro usuarioRegistro)
+        {
+            var registroContent = ObterConteudo(usuarioRegistro);
+
+            var response = await _httpClient.PostAsync("/api/identidade/registrar", registroContent);
+
+            if (!TratarErrosResponse(response))
+            {
+                return new UsuarioRespostaLogin
+                {
+                    ResponseResult = await DeserializarObjetoResponse<ResponseResult>(response)
+                };
+            }
+
+            return await DeserializarObjetoResponse<UsuarioRespostaLogin>(response);
+        }
+    }
+}

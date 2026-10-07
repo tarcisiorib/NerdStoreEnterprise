@@ -1,0 +1,35 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using NSE.WebApp.MVC.Services;
+using System;
+using System.Threading.Tasks;
+
+namespace NSE.WebApp.MVC.Controllers
+{
+    public class CatalogoController : MainController
+    {
+        private readonly ICatalogoService _catalogoService;
+
+        public CatalogoController(ICatalogoService catalogoService)
+        {
+            _catalogoService = catalogoService;
+        }
+
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> Index()
+        {
+            var result = await _catalogoService.ObterTodos();
+
+            return View(result);
+        }
+
+        [HttpGet]
+        [Route("prouto-detalhe/{id}")]
+        public async Task<IActionResult> ProdutoDetalhe(Guid id)
+        {
+            var result = await _catalogoService.ObterPorId(id);
+
+            return View(result);
+        }
+    }
+}
