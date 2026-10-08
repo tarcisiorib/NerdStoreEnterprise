@@ -6,7 +6,6 @@ using NSE.Clientes.API.Application.Events;
 using NSE.Clientes.API.Data;
 using NSE.Clientes.API.Data.Repositories;
 using NSE.Clientes.API.Models;
-using NSE.Clientes.API.Services;
 using NSE.Core.Mediator;
 
 namespace NSE.Clientes.API.Configurations
@@ -24,8 +23,6 @@ namespace NSE.Clientes.API.Configurations
             services.AddScoped<IClienteRepository, ClienteRepository>();
 
             services.AddScoped<ClientesContext>();
-
-            services.AddHostedService<RegistroClienteIntegrationHandler>();
         }
     }
 }
